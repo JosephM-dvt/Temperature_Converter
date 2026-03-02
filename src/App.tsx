@@ -1,6 +1,12 @@
-import TemperatureConverter from "./components/tempConverter"
+import TemperatureConverter from "./components/tempConverter";
+import TeamDirectory from "./components/teamDirectory";
 function App() {
-return (<TemperatureConverter/>)
+  return (
+    <>
+      <TemperatureConverter />
+      <TeamDirectory />
+    </>
+  );
 }
 
-export default App
+export default App;
