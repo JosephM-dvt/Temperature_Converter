@@ -24,9 +24,9 @@ const TemperatureConverter = () => {
 
   return (
     <div>
-      <h2 className="card-title text-2xl text-secondary mb-6">Temperature Converter</h2>
+      <h2 className="text-xl font-black uppercase italic mb-6">Temperature Converter</h2>
       
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
         {units.map((unit) => (
           <TemperatureInput
             key={unit}
@@ -39,18 +39,17 @@ const TemperatureConverter = () => {
       </div>
 
       {temperature !== "" && !isNaN(numericValue) && (
-        <div className="alert bg-primary/10 border-primary/20 text-primary-content">
-          <div className="flex flex-col w-full gap-1">
-            <span className="text-xs uppercase font-black text-primary/70">Summary Results</span>
-            <div className="flex flex-wrap gap-4">
-              {units.map((unit) => (
-                <div key={unit} className="flex flex-col">
-                  <span className="text-lg font-bold text-primary">
-                    {getValueForUnit(unit)}°{unit}
-                  </span>
-                </div>
-              ))}
-            </div>
+        <div className="p-4 bg-base-200 border-l-4 border-primary">
+          <p className="text-[10px] font-mono uppercase mb-2 opacity-50">Conversion Summary</p>
+          <div className="grid grid-cols-3 gap-2">
+            {units.map((unit) => (
+              <div key={unit}>
+                <span className="text-xs font-mono block opacity-60">{SCALE_LABELS[unit]}</span>
+                <span className="text-md font-black">
+                  {getValueForUnit(unit)}°{unit}
+                </span>
+              </div>
+            ))}
           </div>
         </div>
       )}
