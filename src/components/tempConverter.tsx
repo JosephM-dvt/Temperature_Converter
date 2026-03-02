@@ -22,36 +22,38 @@ const TemperatureConverter = () => {
     setScale(unit);
   };
 
-
-
   return (
     <div>
-      <h1 className="text-2xl font-bold ">Temperature Converter</h1>
-      <div className="bg-white border border-gray-300 rounded ">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {units.map((unit) => (
-            <TemperatureInput
-              key={unit}
-              label={SCALE_LABELS[unit]}
-              unit={unit}
-              value={getValueForUnit(unit)}
-              onChange={handleChange}
-            />
-          ))}
-        </div>
-
-        {temperature !== "" && !isNaN(numericValue) && (
-          <div className="bg-blue-50 border border-blue-200 rounded text-sm">
-            <strong>Result:</strong>{" "}
-            {units.map((unit) => (
-              <span key={unit} className="">
-                {getValueForUnit(unit)}°{unit}
-              </span>
-            ))}
-          </div>
-        )}
+      <h2 className="card-title text-2xl text-secondary mb-6">Temperature Converter</h2>
+      
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+        {units.map((unit) => (
+          <TemperatureInput
+            key={unit}
+            label={SCALE_LABELS[unit]}
+            unit={unit}
+            value={getValueForUnit(unit)}
+            onChange={handleChange}
+          />
+        ))}
       </div>
 
+      {temperature !== "" && !isNaN(numericValue) && (
+        <div className="alert bg-primary/10 border-primary/20 text-primary-content">
+          <div className="flex flex-col w-full gap-1">
+            <span className="text-xs uppercase font-black text-primary/70">Summary Results</span>
+            <div className="flex flex-wrap gap-4">
+              {units.map((unit) => (
+                <div key={unit} className="flex flex-col">
+                  <span className="text-lg font-bold text-primary">
+                    {getValueForUnit(unit)}°{unit}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

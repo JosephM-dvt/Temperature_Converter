@@ -9,14 +9,16 @@ interface TemperatureInputProps {
 
 const TemperatureInput = ({ label, unit, value, onChange }: TemperatureInputProps) => {
   return (
-    <div>
-      <label className="block text-sm font-medium text-gray-700">{label} (°{unit})</label>
+    <div className="form-control w-full">
+      <label className="label">
+        <span className="label-text font-bold text-base-content/70">{label} (°{unit})</span>
+      </label>
       <input
         type="number"
         value={value}
         onChange={(e) => onChange(e.target.value, unit)}
-        placeholder="0"
-        className="w-full border border-gray-400 rounded"
+        placeholder="0.00"
+        className="input input-bordered input-secondary w-full focus:input-primary transition-all font-mono"
       />
     </div>
   );
