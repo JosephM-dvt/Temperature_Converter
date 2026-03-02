@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import teamData from "../data/team.json";
 import { mapWeatherToEmoji } from "../utils/mapWeatherToEmoji";
+import UserLocation from "./userLocation";
 import {
   convertTemperature,
   formatTemp,
@@ -95,6 +96,8 @@ const TeamDirectory = () => {
           {employees.length} members tracked
         </p>
       </div>
+
+      <UserLocation unit={displayUnit} />
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center mb-6">
         <input
