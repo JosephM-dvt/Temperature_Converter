@@ -89,3 +89,11 @@ npm run build
 * **data/**: Houses the team member JSON data used to populate the directory.
 
 ---
+**Desktop View: Converter**
+![alt text](<Screenshot 2026-03-02 at 17.33.28.png>) 
+**Desktop View: TeamDirectory**
+![alt text](<Screenshot 2026-03-02 at 17.33.37.png>) 
+**MobileView: TeamDirectory**
+![alt text](<Screenshot 2026-03-02 at 17.34.12.png>) 
+**MobileView: Converter**
+![alt text](<Screenshot 2026-03-02 at 17.34.25.png>)
