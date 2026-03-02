@@ -31,7 +31,6 @@ const UNIT_LABELS: Record<DisplayUnit, string> = {
 };
 
 const API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
-console.log(API_KEY);
 
 const TeamDirectory = () => {
   const [query, setQuery] = useState<string>("");
@@ -41,53 +40,40 @@ const TeamDirectory = () => {
   );
   const [loadingIds, setLoadingIds] = useState<Set<number>>(new Set());
 
-
-useEffect(() => {
-  const fetchWeather = async (member: TeamMember) => {
-    if (weatherMap[member.id] || loadingIds.has(member.id)) return;
-
-    setLoadingIds((prev) => new Set(prev).add(member.id));
-
-    try {
-      const geoRes = await fetch(
-        `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(
-          member.location
-        )}&limit=1&appid=${API_KEY}`
-      );
-
-      if (!geoRes.ok) throw new Error("Geocode failed");
-
-      const geoData = await geoRes.json();
-
-      if (!geoData.length) throw new Error("Location not found");
-
-      const { lat, lon } = geoData[0];
-
-      const weatherRes = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`
-      );
-
-      if (!weatherRes.ok) throw new Error("Weather fetch failed");
-
-      const data = await weatherRes.json();
-
-      const weather: WeatherData = {
-        condition: data.weather?.[0]?.main ?? "Unknown",
-        icon: mapWeatherToEmoji(data.weather?.[0]?.main),
-        tempC: data.main?.temp ?? 0,
-      };
-
-      setWeatherMap((prev) => ({
-        ...prev,
-        [member.id]: weather,
-      }));
-    } catch (err) {
-      console.error("Weather error:", err);
-    }
-  };
-
-  employees.forEach(fetchWeather);
-}, []);
+  useEffect(() => {
+    const fetchWeather = async (member: TeamMember) => {
+      if (weatherMap[member.id] || loadingIds.has(member.id)) return;
+      setLoadingIds((prev) => new Set(prev).add(member.id));
+      try {
+        const geoRes = await fetch(
+          `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(
+            member.location
+          )}&limit=1&appid=${API_KEY}`
+        );
+        if (!geoRes.ok) throw new Error("Geocode failed");
+        const geoData = await geoRes.json();
+        if (!geoData.length) throw new Error("Location not found");
+        const { lat, lon } = geoData[0];
+        const weatherRes = await fetch(
+          `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`
+        );
+        if (!weatherRes.ok) throw new Error("Weather fetch failed");
+        const data = await weatherRes.json();
+        const weather: WeatherData = {
+          condition: data.weather?.[0]?.main ?? "Unknown",
+          icon: mapWeatherToEmoji(data.weather?.[0]?.main),
+          tempC: data.main?.temp ?? 0,
+        };
+        setWeatherMap((prev) => ({
+          ...prev,
+          [member.id]: weather,
+        }));
+      } catch (err) {
+        console.error("Weather error:", err);
+      }
+    };
+    employees.forEach(fetchWeather);
+  }, []);
 
   const filteredEmployees = employees.filter(
     (emp) =>
@@ -103,30 +89,29 @@ useEffect(() => {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-1">👥 Team Directory</h2>
-      <p className="text-gray-500 text-sm mb-4">
-        {employees.length} members · live local weather
-      </p>
+      <div className="mb-6">
+        <h2 className="text-xl font-black uppercase italic">Team Directory</h2>
+        <p className="text-base-content/50 text-xs font-mono">
+          {employees.length} members tracked
+        </p>
+      </div>
 
-      {/* Controls */}
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center mb-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center mb-6">
         <input
           type="text"
-          className="border border-gray-400 rounded text-sm flex-1 focus:outline-none focus:border-blue-500"
-          placeholder="Search by name, role, or location..."
+          className="input input-bordered input-sm flex-1 font-mono focus:border-primary"
+          placeholder="Filter by name, role, or city..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
 
-        <div className="flex gap-1">
+        <div className="join">
           {(Object.keys(UNIT_LABELS) as DisplayUnit[]).map((unit) => (
             <button
               key={unit}
               onClick={() => setDisplayUnit(unit)}
-              className={`text-sm border rounded ${
-                displayUnit === unit
-                  ? "bg-blue-600 text-white border-blue-600"
-                  : "border-gray-400 text-gray-700"
+              className={`join-item btn btn-xs border-base-300 ${
+                displayUnit === unit ? "btn-primary" : "btn-outline"
               }`}
             >
               {UNIT_LABELS[unit]}
@@ -135,52 +120,49 @@ useEffect(() => {
         </div>
       </div>
 
-      {query && (
-        <p className="text-xs text-gray-500 ">
-          Showing {filteredEmployees.length} of {employees.length} members
-        </p>
-      )}
-
-      <div className="flex flex-col gap-2">
+      <div className="space-y-2">
         {filteredEmployees.length === 0 ? (
-          <div className="bg-white border border-gray-300 rounded text-center text-gray-500">
-            No members match "{query}"
+          <div className="p-4 border border-dashed border-base-300 text-center text-sm font-mono opacity-50">
+            No matches found for "{query}"
           </div>
-        ) 
-        :
-        (
+        ) : (
           filteredEmployees.map((member) => {
             const weather = weatherMap[member.id];
 
             return (
               <div
                 key={member.id}
-                className="bg-white border border-gray-300 rounded p-3 flex items-center gap-3"
+                className="flex items-center gap-4 p-3 border border-base-200 hover:border-primary transition-colors"
               >
-                <div className="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold text-sm shrink-0">
-                  {member.avatar}
+                <div className="avatar placeholder">
+                  <div className="bg-neutral text-neutral-content w-10 h-10 border border-primary">
+                    <span className="text-sm font-bold">{member.avatar}</span>
+                  </div>
                 </div>
 
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-sm">{member.name}</p>
-                  <p className="text-xs text-gray-500">
-                    {member.role} · {member.location}
+                  <h3 className="font-bold text-sm leading-tight">{member.name}</h3>
+                  <p className="text-[10px] font-mono uppercase opacity-60">
+                    {member.role}
+                  </p>
+                  <p className="text-[10px] font-bold underline decoration-primary">
+                    {member.location}
                   </p>
                 </div>
 
-                <div className="text-right shrink-0">
+                <div className="text-right">
                   {weather ? (
-                    <>
-                      <div className="text-xl">{weather.icon}</div>
-                      <div className="text-sm font-bold text-blue-600">
+                    <div className="flex flex-col items-end">
+                      <span className="text-lg leading-none">{weather.icon}</span>
+                      <span className="text-sm font-black italic">
                         {getDisplayTemp(weather.tempC)}
-                      </div>
-                      <div className="text-xs text-gray-400">
+                      </span>
+                      <span className="text-[9px] font-mono uppercase text-base-content/40">
                         {weather.condition}
-                      </div>
-                    </>
+                      </span>
+                    </div>
                   ) : (
-                    <div className="text-xs text-gray-400">Loading...</div>
+                    <span className="loading loading-spinner loading-xs opacity-20"></span>
                   )}
                 </div>
               </div>
@@ -188,11 +170,8 @@ useEffect(() => {
           })
         )}
       </div>
-
-      
     </div>
   );
 };
 
 export default TeamDirectory;
-
